@@ -1,0 +1,7 @@
+*! TOC File
+v 3
+d System resource access from Stata
+
+p sysresources Java plugin to access system resources
+
+

@@ -1,0 +1,23 @@
+d 'SYSRESOURCES': A Java-plugin for Stata to access system resources
+d
+d This is a Java-plugin for Stata that allows you to access the computing
+d resources available on your current system.
+d
+d KW: OS
+d KW: Monitoring
+d KW: Resources
+d
+d Requires: Stata version 13.1, Java 8 or later
+d
+d Distribution-Date: 20160211
+d
+d Author: Billy Buchanan
+d         Data Scientist
+d         Office of Research, Evaluation, and Assessment
+d         Minneapolis Public Schools
+d
+d Support: email William [dot] Buchanan @t mpls [dot] k12 [dot] mn [dot] us
+d
+f sysresources.ado
+f sysresources.jar
+
