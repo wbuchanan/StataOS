@@ -7,9 +7,9 @@ d KW: OS
 d KW: Monitoring
 d KW: Resources
 d
-d Requires: Stata version 13.1, Java 8 or later
+d Requires: Stata version 13.1, Java 6 or later
 d
-d Distribution-Date: 20160211
+d Distribution-Date: 20160212
 d
 d Author: Billy Buchanan
 d         Data Scientist
