@@ -12,6 +12,7 @@ public class SysResources {
 
 	private static OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
 
+	/*
 	public static void main(String[] args) {
 		Resources r = new Resources(osBean);
 		System.out.println("Total committed memory is : " + r.prettyBytes(r.committedMemory));
@@ -23,6 +24,13 @@ public class SysResources {
 		System.out.println("System CPU Load is : " + String.valueOf(r.systemCPULoad));
 		System.out.println("Process Load is : " + String.valueOf(r.processLoad));
 		System.out.println("% Free Physical Memory is : " + String.valueOf(r.pctFreeMemory));
+	}
+	*/
+
+	public static int cliOutput(String[] args) {
+		CLIout cli = new CLIout(args);
+		cli.toStata();
+		return 0;
 	}
 
 

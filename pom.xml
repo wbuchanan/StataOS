@@ -69,11 +69,13 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<addClasspath>true</addClasspath>
 							<mainClass>SysResources</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
+
 
 		</plugins>
 	</build>
