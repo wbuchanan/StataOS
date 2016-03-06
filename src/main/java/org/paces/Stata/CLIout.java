@@ -45,11 +45,12 @@ public class CLIout {
 			Process proc = Runtime.getRuntime().exec(cmd);
 			proc.waitFor();
 			cleanResults(processCommand(proc), this.keyValueIDs, this.cleanerIDs);
-		} catch (IOException e) {
+		} catch (IOException e){
 			e.printStackTrace();
-		} catch (InterruptedException d) {
-			d.printStackTrace();
+		} catch(InterruptedException e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class CLIout {
 		List<String> vals = Arrays.asList(groupIds.split(","));
 		List<Integer> retval = new ArrayList<Integer>();
 		if (vals.size() == 2) {
-			for(String i : vals) {
+			for (String i : vals) {
 				if (i.matches("\\d")) retval.add(Integer.valueOf(i));
 			}
 			return retval;
@@ -110,22 +111,25 @@ public class CLIout {
 	private List<String> processCommand(Process proc) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		List<String> resultString = new ArrayList<String>();
-		try {
-			while (hasLine(br)) {
+		while (hasLine(br)) {
+			try {
 				resultString.add(br.readLine());
+				this.rawResults = resultString;
+			} catch (IOException e) {
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		this.rawResults = resultString;
 		return resultString;
 	}
 
-	private Boolean hasLine(BufferedReader br) throws IOException {
-		br.mark(80);
-		Boolean ret = br.readLine() != null;
-		br.reset();
-		return ret;
+	private Boolean hasLine(BufferedReader br) {
+		try {
+			br.mark(120);
+			Boolean retval = br.readLine() != null;
+			br.reset();
+			return retval;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -151,7 +155,7 @@ public class CLIout {
 	 */
 	public String getRawResults() {
 		StringBuilder s = new StringBuilder();
-		for(String i : this.rawResults) {
+		for (String i : this.rawResults) {
 			s.append(i);
 		}
 		return s.toString();
@@ -177,6 +181,9 @@ public class CLIout {
 	 * Method to return results to Stata
 	 */
 	public void toStata() {
+		StringJoiner retnames = new StringJoiner(" ");
+		retnames.add("parser").add("cleaner").add("pgroups").add("clgroups")
+			.add("raw");
 		Macro.setLocal("parser", getParserPattern());
 		Macro.setLocal("cleaner", getCleanerPattern());
 		Macro.setLocal("pgroups", getParserGroups());
@@ -184,9 +191,11 @@ public class CLIout {
 		Macro.setLocal("raw", getRawResults());
 		for (String k : getParsedKeys()) {
 			String key = k.replaceAll("\\W", "_");
+			retnames.add(key);
 			Macro.setLocal(key.substring(0, Math.min(key.length(), 31)),
 				this.parsedResults.get(k));
 		}
+		Macro.setLocal("retnames", retnames.toString());
 	}
 
 
