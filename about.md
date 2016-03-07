@@ -26,7 +26,7 @@ Process Load is : 0.0
 The program now also can return values from the shell in local macro's.  This was also in response to the thread above and was the easiest solution for providing more robust access to system resource information (e.g., size of cached memory).  With no user intervention, the command will attempt to parse the lines of `stdout` into key value pairs and also returns the raw output in case users wanted to process the data differently and/or in Stata.  It will also return the regular expressions used to both parse the input into the key/value pairs, as well as the regular expression used to further munge the key/value elements.  
 
 ```
-. sysresources vm_stat
+. clicmd vm_stat
 
 . ret li
 
