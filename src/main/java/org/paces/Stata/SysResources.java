@@ -29,7 +29,7 @@ public class SysResources {
 
 	public static int cliOutput(String[] args) {
 		CLIout cli = new CLIout(args);
-		cli.toStata();
+		cli.toStata(Boolean.valueOf(args[5]), Boolean.valueOf(args[6]));
 		return 0;
 	}
 

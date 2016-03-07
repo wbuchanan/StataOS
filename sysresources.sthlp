@@ -12,7 +12,10 @@ afterwards.{p_end}
 
 {title:Syntax}
 
-{p 4 4 4}{cmd:sysresources} [, {cmdab:d:isplay}] {break}
+{p 4 4 4}{cmd:sysresources} [{opt cli command}] [, {cmdab:d:isplay}
+{cmdab:par:se(}{it:string}{opt )} {cmdab:cl:ean(}{it:string}{opt )}
+{cmdab:grp:arse(}{it:numlist}{opt )} {cmdab:grc:lean(}{it:numlist}{opt )}]
+{p_end}{break}
 
 {title:Description}
 
