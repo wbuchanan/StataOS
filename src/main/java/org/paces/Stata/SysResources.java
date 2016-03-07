@@ -5,11 +5,16 @@ import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.ManagementFactory;
 
 /**
+ * Class that serves as entry point for StataOS plugins
  * @author Billy Buchanan
  * @version 0.0.0
  */
 public class SysResources {
 
+	/**
+	 * Object used to access some system resources in a platform independent
+	 * manner
+	 */
 	private static OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
 
 	/*
@@ -27,13 +32,27 @@ public class SysResources {
 	}
 	*/
 
+	/**
+	 * Method used to call out to the operating system and return the results
+	 * of those commands to Stata.
+	 * @param args Arguments passed from sysresources.ado via the args()
+	 *                parameter of the javacall command.
+	 * @return An integer indicating whether ot not the call succeeded
+	 */
 	public static int cliOutput(String[] args) {
 		CLIout cli = new CLIout(args);
-		cli.toStata(Boolean.valueOf(args[5]), Boolean.valueOf(args[6]));
+		cli.toStata();
 		return 0;
 	}
 
 
+	/**
+	 * Method used to get general computational resource allocation on the
+	 * system
+	 * @param args Arguments passed from sysresources.ado via the args()
+	 *                parameter of the javacall command.
+	 * @return An integer indicating whether ot not the call succeeded
+	 */
 	public static int compResources(String[] args) {
 		Resources sysresource = new Resources(osBean);
 		if (args.length == 1) {

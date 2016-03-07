@@ -6,10 +6,12 @@ d
 d KW: OS
 d KW: Monitoring
 d KW: Resources
+d KW: shell
+d KW: cli
 d
 d Requires: Stata version 13.1, Java 6 or later
 d
-d Distribution-Date: 20160213
+d Distribution-Date: 20160307
 d
 d Author: Billy Buchanan
 d         Data Scientist
@@ -21,5 +23,8 @@ d
 f sysresources.ado
 f sysresources.sthlp
 f sysresources.jar
+f clicmd.ado
+f clicmd.sthlp
+
 
 
