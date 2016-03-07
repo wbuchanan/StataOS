@@ -5,6 +5,9 @@ import com.stata.sfi.Scalar;
 import com.sun.management.OperatingSystemMXBean;
 
 /**
+ * Class used to access operating system resources that are available across
+ * platforms.
+ *
  * @author Billy Buchanan
  * @version 0.0.0
  */

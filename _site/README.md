@@ -58,3 +58,24 @@ macros:
 ```
 
 The major difference is that the end user is required to know which shell commands are needed to return the information of interest from the operating system.
+
+# Additional Info
+Users can also use this with more sophisticated command line calls, but are responsible for knowing the location and options needed to start a terminal process:
+
+```
+. clicmd "/bin/sh -c ps -x | grep StataMP.app", d
+-------------------------------------------------------------------------------------
+       Key                                       Value
+-------------------------------------------------------------------------------------
+       parser                                    .*
+       cleaner                                   .*
+       pgroups                                   0, 0
+       clgroups                                  0, 0
+       exec                                      /bin/sh -c ps -x | grep StataMP.app
+       line3                                      7056 ttys000 0:00.36 stata-mp
+       line2                                      6869 ttys000 0:00.08 /bin/bash --login
+       line1                                      PID TTY TIME CMD
+-------------------------------------------------------------------------------------
+```
+
+Notice in the case above that the command is wrapped in regular quotation marks.  This allows the entire command string to be passed to the Java plugin as a single element of a String array object created by the `args()` optional parameter of the `javacall` command.

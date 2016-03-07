@@ -29,6 +29,7 @@ public class CLIout {
 	private String parseString;
 	private String cleanString;
 	private String cmd;
+	private ProcessBuilder procBuild;
 
 	/**
 	 * Class constructor
@@ -37,6 +38,7 @@ public class CLIout {
 	public CLIout(String[] args) {
 
 		this.cmd = args[0].replaceAll("\"", "");
+		this.procBuild = procBuilder(args[0]);
 		this.toParse = Boolean.valueOf(args[1]);
 		this.toClean = Boolean.valueOf(args[2]);
 		this.parseString = args[5];
@@ -63,7 +65,7 @@ public class CLIout {
 		}
 
 		try {
-			Process proc = Runtime.getRuntime().exec(cmd);
+			Process proc = this.procBuild.start();
 			proc.waitFor();
 			this.rawResults = processCommand(proc);
 			if (this.toClean) {
@@ -81,6 +83,21 @@ public class CLIout {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Method used to construct a ProcessBuilder object from a single string
+	 * element
+	 * @param cmd The first element passed to the class constructor.  This is
+	 *               the string from the command passed to the clicmd wrapper
+	 *               .  Users need to know to wrap this in quotation marks
+	 *               and to invoke their respective shell before the name of
+	 *               the command they wish to execute.
+	 * @return A Process Builder object used to spin up the process requested
+	 */
+	private ProcessBuilder procBuilder(String cmd) {
+		String[] command = cmd.replaceAll("\"", "").split(" ");
+		return new ProcessBuilder(Arrays.asList(command));
 	}
 
 	/**
@@ -213,7 +230,7 @@ public class CLIout {
 	/**
 	 * Method to return results to Stata
 	 */
-	public void toStata(Boolean parse, Boolean clean) {
+	public void toStata() {
 		StringJoiner retnames = new StringJoiner(" ");
 		retnames.add("parser").add("cleaner").add("pgroups").add("clgroups")
 			.add("raw").add("exec");

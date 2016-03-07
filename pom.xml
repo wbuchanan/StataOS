@@ -6,7 +6,18 @@
 
 	<groupId>org.paces-consulting</groupId>
 	<artifactId>StataOS</artifactId>
-	<version>0.0.0</version>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>A Java plugin for Stata to interface with the
+		command line and return results to Stata.</description>
+
+	<!-- Information regarding Source Control Management -->
+	<scm>
+		<connection>scm:git:git@github.com:wbuchanan/StataOS.git</connection>
+		<developerConnection>scm:git:git@github.com:wbuchanan/StataOS.git</developerConnection>
+		<url>git@github.com:wbuchanan/StataOS.git</url>
+	</scm>
+
 
 	<!-- Information regarding organization publishing the plugin -->
 	<organization>
@@ -35,6 +46,39 @@
 	<contributors>
 	</contributors>
 
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>bintray</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>bintray-plugins</name>
+			<url>http://jcenter.bintray.com</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<!-- Sets repositories where JARs will be deployed -->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
 
 	<!-- Overall properties -->
 	<properties>
@@ -44,7 +88,7 @@
 
 	<!-- Defines how Maven should build the Java binaries -->
 	<build>
-		<defaultGoal>install</defaultGoal>
+		<defaultGoal>jar</defaultGoal>
 		<finalName>sysresources</finalName>
 		<plugins>
 
@@ -76,6 +120,66 @@
 				</configuration>
 			</plugin>
 
+			<!-- Builds a source code JAR -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Builds a javadoc JAR -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Used to sign the files with GPG key -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<!-- Plugin used to deploy the artifacts to the server -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+
 
 		</plugins>
 	</build>
@@ -89,6 +193,7 @@
 			<version>14</version>
 			<type>jar</type>
 			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 
