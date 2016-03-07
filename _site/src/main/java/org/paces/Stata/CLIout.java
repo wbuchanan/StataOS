@@ -14,37 +14,67 @@ import java.util.regex.*;
  */
 public class CLIout {
 
-	private static final Integer[] DEFAULT_INT_ARRAY = new Integer[]{2, 4};
+	private static final List<Integer> DEFAULT_NO_GROUPS = Arrays.asList(0, 0);
 	private static final Pattern DEFAULT_PARSER = Pattern.compile("((.*)(\\s{1,}+)(.*))");
 	private static final Pattern DEFAULT_CLEANER = Pattern.compile("(^([\\w _]{1,}+)(\\W{1,}.*)$)");
-	private static final List<Integer> DEFAULT_PARSER_IDS = Arrays.asList(DEFAULT_INT_ARRAY);
-	private static final List<Integer> DEFAULT_CLEANER_IDS = Arrays.asList(DEFAULT_INT_ARRAY);
+	private static final List<Integer> DEFAULT_GROUP_IDS = Arrays.asList(2, 4);
 	private Pattern parser;
 	private Pattern cleaner;
 	private List<String> rawResults = new ArrayList<String>();
 	private Map<String, String> parsedResults = new HashMap<String, String>();
 	private List<Integer> keyValueIDs = new ArrayList<Integer>();
 	private List<Integer> cleanerIDs = new ArrayList<Integer>();
-
+	private Boolean toParse;
+	private Boolean toClean;
+	private String parseString;
+	private String cleanString;
+	private String cmd;
 
 	/**
 	 * Class constructor
 	 * @param args Passed from the args option of Java call
 	 */
 	public CLIout(String[] args) {
-		String cmd = args[0];
-		if (!args[1].isEmpty()) this.parser = Pattern.compile(args[1]);
-		else this.parser = DEFAULT_PARSER;
-		if (!args[2].isEmpty()) this.cleaner = Pattern.compile(args[2]);
-		else this.cleaner = DEFAULT_CLEANER;
-		if (args[3].isEmpty()) this.keyValueIDs = DEFAULT_PARSER_IDS;
-		else this.keyValueIDs = parseGroups(args[3]);
-		if (args[4].isEmpty()) this.cleanerIDs = DEFAULT_CLEANER_IDS;
-		else this.cleanerIDs = parseGroups(args[4]);
+
+		this.cmd = args[0].replaceAll("\"", "");
+		this.toParse = Boolean.valueOf(args[1]);
+		this.toClean = Boolean.valueOf(args[2]);
+		this.parseString = args[5];
+		this.cleanString = args[6];
+
+		if (this.toParse || this.toClean) {
+			if (args[3].isEmpty()) this.keyValueIDs = DEFAULT_GROUP_IDS;
+			else this.keyValueIDs = parseGroups(args[3]);
+
+			if (args[4].isEmpty()) this.cleanerIDs = DEFAULT_GROUP_IDS;
+			else this.cleanerIDs = parseGroups(args[4]);
+
+			if (!this.parseString.isEmpty()) this.parser = Pattern.compile(this.parseString);
+			else this.parser = DEFAULT_PARSER;
+
+			if (!this.cleanString.isEmpty()) this.cleaner = Pattern.compile(this.cleanString);
+			this.cleaner = DEFAULT_CLEANER;
+
+		} else {
+			this.keyValueIDs = DEFAULT_NO_GROUPS;
+			this.cleanerIDs = DEFAULT_NO_GROUPS;
+			this.parser = Pattern.compile(".*");
+			this.cleaner = Pattern.compile(".*");
+		}
+
 		try {
 			Process proc = Runtime.getRuntime().exec(cmd);
 			proc.waitFor();
-			cleanResults(processCommand(proc), this.keyValueIDs, this.cleanerIDs);
+			this.rawResults = processCommand(proc);
+			if (this.toClean) {
+				cleanResults(this.rawResults, this.keyValueIDs, this.cleanerIDs);
+			} else {
+				for(Integer i = 0; i < this.rawResults.size(); i++) {
+					String mapName = "line" + String.valueOf(i + 1);
+					this.parsedResults.put(mapName, this.rawResults.get(i)
+						.replaceAll("\"", ""));
+				}
+			}
 		} catch (IOException e){
 			e.printStackTrace();
 		} catch(InterruptedException e) {
@@ -61,9 +91,12 @@ public class CLIout {
 	 * @param cln The list of integers used to extract clean key and value
 	 *               elements
 	 */
-	private void cleanResults(List<String> cmdResult, List<Integer> kv, List<Integer> cln) {
+	private void cleanResults(List<String> cmdResult, List<Integer> kv,
+	                          List<Integer> cln) {
 		for(String i : cmdResult) {
-			Matcher line = this.parser.matcher(i);
+			// Removes double quotes from the string before implementing the
+			// regex
+			Matcher line = this.parser.matcher(i.replaceAll("\"", ""));
 			if (line.find()) {
 				String k = line.group(kv.get(0));
 				String v = line.group(kv.get(1));
@@ -98,7 +131,7 @@ public class CLIout {
 			}
 			return retval;
 		} else {
-			return DEFAULT_PARSER_IDS;
+			return DEFAULT_GROUP_IDS;
 		}
 	}
 
@@ -123,7 +156,7 @@ public class CLIout {
 
 	private Boolean hasLine(BufferedReader br) {
 		try {
-			br.mark(120);
+			br.mark(8);
 			Boolean retval = br.readLine() != null;
 			br.reset();
 			return retval;
@@ -180,24 +213,23 @@ public class CLIout {
 	/**
 	 * Method to return results to Stata
 	 */
-	public void toStata() {
+	public void toStata(Boolean parse, Boolean clean) {
 		StringJoiner retnames = new StringJoiner(" ");
 		retnames.add("parser").add("cleaner").add("pgroups").add("clgroups")
-			.add("raw");
+			.add("raw").add("exec");
+		Macro.setLocal("exec", this.cmd);
 		Macro.setLocal("parser", getParserPattern());
 		Macro.setLocal("cleaner", getCleanerPattern());
 		Macro.setLocal("pgroups", getParserGroups());
 		Macro.setLocal("clgroups", getCleanerGroups());
 		Macro.setLocal("raw", getRawResults());
 		for (String k : getParsedKeys()) {
-			String key = k.replaceAll("\\W", "_");
+			String key = k.replaceAll("\\W", "_").toLowerCase();
 			retnames.add(key);
 			Macro.setLocal(key.substring(0, Math.min(key.length(), 31)),
 				this.parsedResults.get(k));
 		}
 		Macro.setLocal("retnames", retnames.toString());
 	}
-
-
 
 }
